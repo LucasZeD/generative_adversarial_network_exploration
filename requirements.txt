@@ -1,0 +1,13 @@
+# gans
+torch
+torchvision
+matplotlib
+numpy
+# diffusion
+diffusers
+transformers
+accelerate
+# evaluator
+sklearn.manifold
+seaborn
+pandas
