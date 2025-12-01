@@ -11,3 +11,6 @@ accelerate
 sklearn.manifold
 seaborn
 pandas
+# realesrgan
+huggingface_hub
+Pillow
