@@ -30,7 +30,6 @@ checkpoints/*
 # 2. Abre exceção APENAS para os modelos finais
 !checkpoints/dcgan_model_final.pth
 !checkpoints/sr_generator_finetuned.pth
-!checkpoints/RealESRGAN_x4.pth
 
 # Se houver arquivos de log soltos
 *.log
