@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 from pathlib import Path
 import torch.nn as nn
+from PIL import Image
 import torchvision
 import torch
 import sys
@@ -82,7 +83,6 @@ class Generator(nn.Module):
 class CachedDataset(torch.utils.data.Dataset):
     def __init__(self, root, transform=None):
         self.data = []
-
         # Dynamic transform apenas para Augmentation (Flip)
         self.dynamic_transform = transforms.RandomHorizontalFlip(p=0.5)
         
@@ -94,16 +94,42 @@ class CachedDataset(torch.utils.data.Dataset):
         ])
 
         print(f"Carregando dataset de {root} para RAM...")
-        if not os.path.exists(root):
-            if not os.path.exists(str(root)):
-                raise FileNotFoundError(f"Dataset não encontrado em: {root}")
-        # find/load the files
-        temp_dataset = torchvision.datasets.ImageFolder(root=str(root))
+        root_path = Path(root)
+        if not root_path.exists():
+            raise FileNotFoundError(f"Dataset não encontrado em: {root}")
         
-        for img, _ in temp_dataset:
-            processed_tensor = self.static_transform(img)
-            self.data.append(processed_tensor)
+        # Tenta carregar usando ImageFolder (espera subpastas)
+        try:
+            temp_dataset = torchvision.datasets.ImageFolder(root=str(root))
+            print("Estrutura de pastas de classe detectada.")
+            for img, _ in temp_dataset:
+                processed_tensor = self.static_transform(img)
+                self.data.append(processed_tensor)
+        
+        # Se falhar (erro de class folder), carrega arquivos soltos (Fallback)
+        except Exception:
+            print("Aviso: Nenhuma subpasta encontrada. Alternando para modo 'Flat Directory'...")
             
+            # Pega extensões comuns de imagem
+            extensions = ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.webp']
+            files = []
+            for ext in extensions:
+                files.extend(list(root_path.glob(ext)))
+                # Tenta versão maiúscula também
+                files.extend(list(root_path.glob(ext.upper())))
+            
+            if not files:
+                raise FileNotFoundError(f"Nenhuma imagem encontrada em {root}")
+
+            for file_path in files:
+                try:
+                    # Carrega imagem manualmente com PIL
+                    img = Image.open(file_path).convert("RGB")
+                    processed_tensor = self.static_transform(img)
+                    self.data.append(processed_tensor)
+                except Exception as e:
+                    print(f"Erro ao ler {file_path.name}: {e}")
+
         print(f"Carregado: {len(self.data)} imagens.")
 
     def __getitem__(self, index):
@@ -249,7 +275,7 @@ def main():
                 patience_counter = 0 # Reseta se recuperar
 
             # Logs visuais
-            if (epoch + 1) % 10 == 0 or epoch == 0:
+            if (epoch + 1) % 5 == 0 or epoch == 0:
                 with torch.no_grad():
                     fake_display = gen(fixed_noise)
                     # Caminho agora usa operador / corretamente com objetos Path

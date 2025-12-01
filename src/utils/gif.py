@@ -1,33 +1,57 @@
-import glob
 from PIL import Image
+import glob
 import os
 
-def create_gif(input_folder, output_gif, file_names, duration):
+def create_gif(input_folder, output_gif, file_names="epoch_", duration=100):
+    """
+    Gera um GIF a partir de imagens em uma pasta.
+    
+    Args:
+        input_folder (str): Caminho da pasta onde estão as imagens (ex: results/logs).
+        output_gif (str): Caminho COMPLETO do arquivo de saída (ex: results/video.gif).
+        file_names (str): Prefixo dos arquivos a serem buscados.
+        duration (int): Duração de cada frame em ms.
+    """
     # 1. Buscar todas as imagens que começam com o padrão especificado
-    filenames = sorted(glob.glob(os.path.join(input_folder, file_names + "*.png")))
-    _duration = duration
+    search_pattern = os.path.join(input_folder, file_names + "*.png")
+    filenames = sorted(glob.glob(search_pattern))
 
     if not filenames:
-        print("Nenhuma imagem encontrada! Verifique se o treino rodou e salvou os .png.")
+        print(f"AVISO (GIF): Nenhuma imagem encontrada em '{search_pattern}'.")
         return
 
-    print(f"Encontradas {len(filenames)} imagens. Gerando GIF...")
+    print(f"GIF: Encontradas {len(filenames)} imagens. Processando...")
 
     # 2. Carregar imagens na memória
-    images = [Image.open(f) for f in filenames]
+    frames = []
+    for f in filenames:
+        try:
+            frames.append(Image.open(f))
+        except Exception as e:
+            print(f"Erro ao ler {f}: {e}")
+
+    if not frames:
+        return
 
     # 3. Salvar como GIF
-    output_file = os.path.join(input_folder, output_gif)
-    
-    images[0].save(
-        output_file,
-        save_all=True,
-        append_images=images[1:],
-        duration=_duration,
-        loop=0                    # 0 = Loop infinito
-    )
-
-    print(f"Sucesso! GIF salvo em: {os.path.abspath(output_file)}")
+    # Nota: output_gif já vem como caminho completo do script de treino
+    try:
+        frames[0].save(
+            output_gif,
+            save_all=True,
+            append_images=frames[1:],
+            duration=duration,
+            loop=0  # 0 = Loop infinito
+        )
+        print(f"GIF salvo com sucesso em: {os.path.abspath(output_gif)}")
+    except Exception as e:
+        print(f"Erro ao salvar GIF: {e}")
     
 if __name__ == "__main__":
-    create_gif(input_folder="results_cats_mlp", output_gif="cat_mlp_epoch_.gif", file_names="cat_mlp_epoch_", duration=25)
+    # Teste manual (ajuste os caminhos se for rodar este arquivo sozinho)
+    create_gif(
+        input_folder="results/training_logs/dcgan_epochs", 
+        output_gif="results/teste_manual.gif", 
+        file_names="epoch_", 
+        duration=100
+    )

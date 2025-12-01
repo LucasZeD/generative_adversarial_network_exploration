@@ -7,6 +7,7 @@ import torchvision.models as models
 import matplotlib.pyplot as plt
 import torch.optim as optim
 from pathlib import Path
+from PIL import Image
 import torch.nn as nn
 import torch
 import sys
@@ -130,18 +131,41 @@ class CachedSRDataset(torch.utils.data.Dataset):
         ])
 
         print(f"Carregando e processando dataset de {root_dir} para RAM...")
-        if not os.path.exists(str(root_dir)):
+        root_path = Path(root_dir)
+        if not root_path.exists():
              raise FileNotFoundError(f"Dataset não encontrado em: {root_dir}")
-
-        temp_dataset = datasets.ImageFolder(root=str(root_dir))
         
-        for img, _ in temp_dataset:
-            # Carrega e processa na hora da inicialização
-            hr = self.high_res_transform(img)
-            lr = self.low_res_transform(img)
-            
-            self.data_high.append(hr)
-            self.data_low.append(lr)
+        # 1. Tenta carregar imagens manualmente (Flat Directory)
+        extensions = ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.webp']
+        files = []
+        for ext in extensions:
+            files.extend(list(root_path.glob(ext)))
+            files.extend(list(root_path.glob(ext.upper()))) # Case insensitive check
+
+        if len(files) > 0:
+            print(f"Modo Flat Directory detectado. Encontrados {len(files)} arquivos.")
+            for file_path in files:
+                try:
+                    img = Image.open(file_path).convert("RGB")
+                    hr = self.high_res_transform(img)
+                    lr = self.low_res_transform(img)
+                    self.data_high.append(hr)
+                    self.data_low.append(lr)
+                except Exception as e:
+                    print(f"Erro ao ler {file_path.name}: {e}")
+                    
+        else:
+            # 2. Se não achou arquivos soltos, tenta ImageFolder (Subpastas)
+            print("Nenhum arquivo solto encontrado. Tentando estrutura de pastas (ImageFolder)...")
+            try:
+                temp_dataset = datasets.ImageFolder(root=str(root_dir))
+                for img, _ in temp_dataset:
+                    hr = self.high_res_transform(img)
+                    lr = self.low_res_transform(img)
+                    self.data_high.append(hr)
+                    self.data_low.append(lr)
+            except Exception as e:
+                raise FileNotFoundError(f"Não foi possível carregar imagens nem como Flat nem como Folder: {e}")
             
         print(f"Cache concluído: {len(self.data_high)} pares de imagens carregados.")
 

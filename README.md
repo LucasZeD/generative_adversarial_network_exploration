@@ -116,9 +116,11 @@ generative_adversarial_network_exploration/
 │
 ├── results/                    # Saídas visuais (imagens geradas/logs)
 │   ├── training_logs/          # Gifs e imagens de épocas
-│   ├── inference_dcgan/        # Saída do passo A
-│   ├── inference_srgan/        # Saída do passo C
+│   ├── inference_dcgan/
+│   ├── inference_srgan/
 │   └── pipeline_final/         # Saída do Pipeline completo
+|
+├── results/                    # best saved results
 │
 ├── .gitignore
 ├── LICENSE
@@ -130,3 +132,13 @@ generative_adversarial_network_exploration/
 - `checkpoints/`: Modelos treidanos (.pth)
 - `results/training_logs`: Gifs de evolução do treinamento
 - `results/pipeline_final`: Resultado final da integração dos modelos.
+
+## Comparativo de Arquiteturas
+
+| Característica           | GAN                                                                                          | Stable Diffusion                                                             |
+|--------------------------|----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| Velocidade de Inferência | Instantânea (ms). Gera em um passo.                                                          | Lenta (segundos). Requer 20-50 passos iterativos.                            |
+| Controle                 | Espaço Latente Matemático ($z$). Difícil de controlar semanticamente sem técnicas avançadas. | Prompt de Texto. Controle semântico nativo ("gato azul").                    |
+| Estabilidade de Treino   | Baixa. Sofre de Mode Collapse (gera sempre o mesmo gato) e oscilação.                        | Alta. A função de perda é mais simples (MSE no ruído), não tem "adversário". |
+| Resolução Nativa         | Difícil escalar. Geralmente baixa (64x64, 128x128).                                          | Alta (512x512, 1024x1024) por padrão.                                        |
+| Uso Principal            | Upscaling (SRGAN), Transferência de Estilo em tempo real.                                    | Geração de Arte, Edição de Imagem, Inpainting.                               |
