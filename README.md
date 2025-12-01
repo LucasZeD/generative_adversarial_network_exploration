@@ -156,3 +156,13 @@ generative_adversarial_network_exploration/
 | Estabilidade de Treino   | Baixa. Sofre de Mode Collapse (gera sempre o mesmo gato) e oscilação.                        | Alta. A função de perda é mais simples (MSE no ruído), não tem "adversário". |
 | Resolução Nativa         | Difícil escalar. Geralmente baixa (64x64, 128x128).                                          | Alta (512x512, 1024x1024) por padrão.                                        |
 | Uso Principal            | Upscaling (SRGAN), Transferência de Estilo em tempo real.                                    | Geração de Arte, Edição de Imagem, Inpainting.                               |
+
+## Trabalhos Futuros
+
+- Operações elementares vetoriais utilizando o DCGAN.
+Gerar um modelo com duas classes, somar os vetores usando Latent Interpolation para fazer a fusão Gato-Cachorr, treinando o dataset completo AFHQ.
+1. A rede aprende a gerar tando o gato quando o cachorro.
+2. Encontra-se o vetor latente médio de um gato (Z(gato))
+3. Encontra-se o vetor latente médio de um cachorro (Z(cachorro))
+4. Calcula-se o vetor híbrido: Z = ($0.5 \times Z(gato)$) + ($0.5 \times Z(cachorro)$)
+5. O resultado será um animal híbrido semanticamente coerente.
