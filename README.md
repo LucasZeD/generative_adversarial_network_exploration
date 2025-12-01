@@ -93,36 +93,48 @@ python src/inference/pipeline.py
 ```plaintext
 generative_adversarial_network_exploration/
 │
-├── data/                       # Dados brutos.
-│   └── train/                  # Imagens do AFHQ (gatos)
+├── data/                                   # Dados brutos.
+│   └── train/                              # Imagens do AFHQ (gatos)
 │
 ├── src/
 │   ├── __init__.py
-│   ├── training/               # Scripts de treinamento
+│   ├── training/                           # Scripts de treinamento
 │   │   ├── dcgan_training.py
 │   │   └── esrgan_finetuning.py
 │   │
-│   ├── inference/              # Scripts de inferência/geração
+│   ├── inference/                          # Scripts de inferência/geração
 │   │   ├── dcgan_inference.py
 │   │   ├── esrgan_inference.py
 │   │   ├── realesrgan_inference.py
-│   │   └── pipeline.py         # Renomeado de image_inference_pipeline.py
+│   │   └── pipeline.py                     # Renomeado de image_inference_pipeline.py
 │   │
-│   └── utils/                  # Funções auxiliares
+│   └── utils/                              # Funções auxiliares
 │       └── gif.py
 │
-├── checkpoints/                # (.pth) Pesos treinados e modelos finais
+├── checkpoints/                            # (.pth) Pesos treinados e modelos finais
 │   ├── dcgan_model_final.pth
 │   ├── sr_generator_finetuned.pth
 │   └── ...
 │
-├── results/                    # Saídas visuais (imagens geradas/logs)
-│   ├── training_logs/          # Gifs e imagens de épocas
+├── results/                                # Saídas visuais (imagens geradas/logs)
+│   ├── training_logs/                      # Gifs e imagens de épocas
 │   ├── inference_dcgan/
 │   ├── inference_srgan/
-│   └── pipeline_final/         # Saída do Pipeline completo
+│   └── pipeline_final/                     # Saída do Pipeline completo
 |
-├── results/                    # best saved results
+├── examples/                               # best saved results
+|   ├── dcgan/
+│   │   ├── cherry_picked_results/          # best results from inference
+│   │   ├── training/                       # training summup
+│   │   ├── dcgan_loss_graph.png
+│   │   └── dcgan_training_evolution.gif    # training epochs gif
+│   ├── esrgan/
+│   │   ├── cherry_picked_results/          # best results from inference
+│   │   ├── training/                       # training summup
+│   │   └── srgan_loss_graph.png
+│   ├── realesrgan/
+│   │   └── cherry_picked_results/          # best results from inference
+│   └── stablediffusion/                    # results from inference
 │
 ├── .gitignore
 ├── LICENSE
