@@ -64,7 +64,9 @@ def main():
     # Caminhos
     INPUT_DIR = PROJECT_ROOT / "results" / "inference_dcgan" / "samples"
     OUTPUT_DIR = PROJECT_ROOT / "results" / "inference_realesrgan"
-    WEIGHTS_DIR = PROJECT_ROOT / "checkpoints" / "realesrgan_weights"
+    # WEIGHTS_DIR = PROJECT_ROOT / "checkpoints" / "realesrgan_weights"
+    CHECKPOINTS_DIR = PROJECT_ROOT / "checkpoints"
+    WEIGHTS_DIR = CHECKPOINTS_DIR
     
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     WEIGHTS_DIR.mkdir(parents=True, exist_ok=True)

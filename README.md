@@ -66,6 +66,8 @@ python src/inference/dcgan_inference.py
 python src/inference/realesrgan_inference.py
 # C. Upscale 'Especializado' (Finetuned-SRGAN)
 python src/inference/esrgan_inference.py
+# D. Stable Diffusion
+python src/inference/stable_diffusion_inference.py
 ```
 
 **Passo 4:** Pipeline Completo Automatizado

@@ -268,8 +268,11 @@ def main():
                     lr_upscaled = torch.nn.functional.interpolate(low_res[:4], scale_factor=4)
                     img_grid = torch.cat((lr_upscaled, fake_high_res[:4], high_res[:4]), dim=3)
                     save_image(img_grid, str(save_path))
-                
-                torch.save(gen.state_dict(), str(MODEL_PATH))
+
+            # Salvar checkpoint periodicamente (a cada 10 épocas)
+            if (epoch + 1) % 10 == 0:
+                 torch.save(gen.state_dict(), CHECKPOINTS_DIR / f"sr_generator_finetuned_epoch_{epoch+1}.pth")
+            # torch.save(gen.state_dict(), str(MODEL_PATH))
 
     except KeyboardInterrupt:
         print("Interrompido pelo usuário. Salvando...")

@@ -4,6 +4,7 @@ from pathlib import Path
 from PIL import Image
 import torch.nn as nn
 import torch
+import sys
 import os
 
 FILE_PATH = Path(__file__).resolve()
@@ -71,7 +72,7 @@ def upscale_image(image_path, model, device, transform):
     img_tensor = transform(img).unsqueeze(0).to(device) # Adiciona dimensão de batch (1, C, H, W)
     with torch.no_grad():
         upscaled_tensor = model(img_tensor)
-    return upscaled_tensor
+    return img_tensor, upscaled_tensor
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
